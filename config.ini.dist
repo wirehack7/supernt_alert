@@ -1,0 +1,13 @@
+[BASE]
+# checking times, uses modulus on minutes
+time = 5
+
+# set telegram bot config
+telegram_webhook =
+telegram_id =
+
+# add articles comma separated, do not add , at the end
+articles = Super Nt - Classic, Super Nt - SF
+
+# do we debug?
+DEBUG = true
