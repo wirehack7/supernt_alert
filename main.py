@@ -9,7 +9,7 @@ import logging
 
 logging.basicConfig(filename='alerting.log', filemode='w',
                     format='%(asctime)s %(process)d %(module)s:%(funcName)s %(levelname)s: %(message)s',
-                    level=logging.INFO)
+                    level=logging.DEBUG)
 
 
 # TODO: add better check

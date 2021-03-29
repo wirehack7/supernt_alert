@@ -46,3 +46,9 @@ Or via *systemd* service. Or *init.d*. Or any other way you might find.
 ## Contribute
 
 Feel free to fork, edit or request pulls.
+
+## Credits
+
+This script has been created mainly for the awesome [Dennsen86](https://www.twitch.tv/dennsen86) community!
+
+*wirehack7 = wepeelis*
