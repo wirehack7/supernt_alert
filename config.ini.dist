@@ -10,4 +10,4 @@ telegram_id =
 articles = Super Nt - Classic, Super Nt - SF
 
 # do we debug?
-DEBUG = true
+DEBUG = false

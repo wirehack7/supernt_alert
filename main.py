@@ -6,10 +6,11 @@ import urllib
 import pprint
 from bs4 import BeautifulSoup
 import logging
+import time
 
 logging.basicConfig(filename='alerting.log', filemode='w',
                     format='%(asctime)s %(process)d %(module)s:%(funcName)s %(levelname)s: %(message)s',
-                    level=logging.DEBUG)
+                    level=logging.INFO)
 
 
 # TODO: add better check
@@ -39,23 +40,27 @@ config = check_cfg()
 
 def send_telegram(message):
     pp = pprint.PrettyPrinter(indent=4)
-    URL = 'https://api.telegram.org/bot{}/sendMessage?chat_id={}&text={}&parse_mode=markdown'.format(
-        config.get('BASE', 'telegram_webhook'),
-        config.get('BASE', 'telegram_id'),
-        urllib.parse.quote_plus(message))
-    if config.get('BASE', 'DEBUG') == 'true': pp.pprint(URL)
-    r = requests.get(url=URL)
-    data = r.json()
+    send_ids = config.get('BASE', 'telegram_id').split(', ')
+    for id in send_ids:
+        logging.debug("Trying to send to: %s", id)
+        URL = 'https://api.telegram.org/bot{}/sendMessage?chat_id={}&text={}&parse_mode=markdown'.format(
+            config.get('BASE', 'telegram_webhook'),
+            id,
+            urllib.parse.quote_plus(message))
+        if config.get('BASE', 'DEBUG') == 'true': pp.pprint(URL)
+        r = requests.get(url=URL)
+        data = r.json()
 
-    if config.get('BASE', 'DEBUG') == 'true': pp.pprint(data)
+        if config.get('BASE', 'DEBUG') == 'true': pp.pprint(data)
 
-    if not data['ok']:
-        exit("Sending message failed, check config")
-    else:
-        return data
+        if not data['ok']:
+            logging.error('Sending message failed, check config')
+            print("Sending message failed, check config")
+
+    return data
 
 
-def scrape_supernt(url, dom_element, text):
+def scrape_supernt(url):
     pp = pprint.PrettyPrinter(indent=4)
     articles = config.get('BASE', 'articles').split(', ')
 
@@ -73,8 +78,10 @@ def scrape_supernt(url, dom_element, text):
 
 if __name__ == '__main__':
     logging.info('Starting script...')
-    scrape_supernt('https://www.analogue.co/store', '', '')
+    scrape_supernt('https://www.analogue.co/store')
     while 1:
         now = datetime.datetime.now()
         if now.minute % int(config.get('BASE', 'time')) == 0:
-            scrape_supernt('https://www.analogue.co/store', '', '')
+            if config.get('BASE', 'DEBUG') == 'true': print('shoot')
+            scrape_supernt('https://www.analogue.co/store')
+            time.sleep(60)
