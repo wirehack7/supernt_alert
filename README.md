@@ -36,6 +36,13 @@ nohup python main.python
 
 Or via *systemd* service. Or *init.d*. Or any other way you might find.
 
+## Telegram bot
+
+1. Create a telegram bot: [Telegram bot guide](https://core.telegram.org/bots#3-how-do-i-create-a-bot)
+2. Get your *Webhook* code
+3. Get your user ID: write to telegram bot *@myidbot* `/getid`
+4. Start bot communication with sending `/start` to your bot
+
 ## Contribute
 
 Feel free to fork, edit or request pulls.
