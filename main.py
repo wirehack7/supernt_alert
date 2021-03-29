@@ -81,6 +81,8 @@ if __name__ == '__main__':
     scrape_supernt('https://www.analogue.co/store')
     while 1:
         now = datetime.datetime.now()
+        if now.hour == 23 and now.minute == 5 and now.second == 0 and now.microsecond < 1000 and now.day % 7 == 0:
+            logging.info("Heartbeat: it is: %s", now.strftime("%d/%m/%Y %H:%M:%S"))
         if now.minute % int(config.get('BASE', 'time')) == 0:
             if config.get('BASE', 'DEBUG') == 'true': print('shoot')
             scrape_supernt('https://www.analogue.co/store')
