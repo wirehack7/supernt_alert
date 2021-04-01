@@ -1,7 +1,7 @@
 <?php
 
 # set directory to alerting script:
-$dir = '/path/to/supernt_alerts/';
+$dir = '/path/to/supernt_alert/';
 
 ?>
 <html>
@@ -28,18 +28,18 @@ $re = '/[0-9]{3,}/';
 if(preg_match_all($re, $str, $matches)){
         #var_dump($matches);
         if(isPidRunning($matches[0][2])){
-                echo "Script is running with PID: ".$matches[0][2]."\n\n";
+                echo "Script is running with PID: ".$matches[0][2]."<br />\n\n";
         }else{
-                echo "Script is <b>not</b> running\n\n";
+                echo "Script is <b>not</b> running<br />\n\n";
         }
 }
 
 $config = parse_ini_file($dir.'config.ini', true);
 
 echo "Following items are observed: ".$config['BASE']['articles']."<br />\n";
-
+$ids = explode(", ", $config['BASE']['telegram_id']);
 echo "<pre>\n\n";
-echo str_replace($config['BASE']['telegram_id'], 'telegram_id', file_get_contents($file));
+echo str_replace($ids, 'telegram_id', file_get_contents($dir.'alerting.log'));
 echo "\n</pre>\n\n";
 ?>
 </body>

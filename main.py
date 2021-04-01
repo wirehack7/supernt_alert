@@ -68,7 +68,7 @@ def scrape_supernt(url):
     r = requests.get(url)
     soup = BeautifulSoup(r.text, features="html.parser")
     for article in articles:
-        if soup.find(text=article).parent.parent.find(text="bout of stock"):
+        if soup.find(text=article).parent.parent.find(text="out of stock"):
             logging.debug('%s is out of stock', article)
         else:
             logging.info('%s is available!', article)
