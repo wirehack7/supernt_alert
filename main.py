@@ -56,8 +56,9 @@ def send_telegram(message):
         if not data['ok']:
             logging.error('Sending message failed, check config')
             print("Sending message failed, check config")
+        time.sleep(2)
 
-    return data
+    return True
 
 
 def scrape_supernt(url):
@@ -67,10 +68,16 @@ def scrape_supernt(url):
     r = requests.get(url)
     soup = BeautifulSoup(r.text, features="html.parser")
     for article in articles:
-        if soup.find(text=article).parent.parent.find(text="out of stock"):
+        if soup.find(text=article).parent.parent.find(text="bout of stock"):
             logging.debug('%s is out of stock', article)
         else:
             logging.info('%s is available!', article)
+            articles.remove(article)
+            str_articles = ', '.join(articles)
+            print(str_articles)
+            config.set('BASE', 'articles', str_articles)
+            with open('config.ini', 'w') as configfile:
+                config.write(configfile)
             send_telegram("*SuperNT ALERT*\n" \
                           "{} is available!\n" \
                           "[Analogue Shop](https://www.analogue.co/store#super-nt)".format(article))

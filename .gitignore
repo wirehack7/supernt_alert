@@ -140,3 +140,4 @@ cython_debug/
 # config file
 config.ini
 alerting.log
+check.php

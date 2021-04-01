@@ -1,0 +1,46 @@
+<?php
+
+# set directory to alerting script:
+$dir = '/path/to/supernt_alerts/';
+
+?>
+<html>
+<head>
+<title>Is it running?</title>
+</head>
+<body>
+
+<?php
+
+function isPidRunning($pid) {
+  $lines_out = array();
+  exec('ps '.(int)$pid, $lines_out);
+  if(count($lines_out) >= 2) {
+    // Process is running
+    return true;
+  }
+  return false;
+}
+
+$str = fgets(fopen($dir.'alerting.log', 'r'));
+$re = '/[0-9]{3,}/';
+
+if(preg_match_all($re, $str, $matches)){
+        #var_dump($matches);
+        if(isPidRunning($matches[0][2])){
+                echo "Script is running with PID: ".$matches[0][2]."\n\n";
+        }else{
+                echo "Script is <b>not</b> running\n\n";
+        }
+}
+
+$config = parse_ini_file($dir.'config.ini', true);
+
+echo "Following items are observed: ".$config['BASE']['articles']."<br />\n";
+
+echo "<pre>\n\n";
+echo str_replace($config['BASE']['telegram_id'], 'telegram_id', file_get_contents($file));
+echo "\n</pre>\n\n";
+?>
+</body>
+</html>
