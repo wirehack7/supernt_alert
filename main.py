@@ -7,6 +7,7 @@ import pprint
 from bs4 import BeautifulSoup
 import logging
 import time
+import random
 
 logging.basicConfig(filename='alerting.log', filemode='w',
                     format='%(asctime)s %(process)d %(module)s:%(funcName)s %(levelname)s: %(message)s',
@@ -65,7 +66,26 @@ def scrape_supernt(url):
     pp = pprint.PrettyPrinter(indent=4)
     articles = config.get('BASE', 'articles').split(', ')
 
-    r = requests.get(url)
+    agents = [
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 '
+        'Safari/537.36',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 '
+        'Safari/537.36 Edg/89.0.774.68',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 '
+        'Safari/537.36 OPR/75.0.3969.149',
+        'Mozilla/5.0 (Linux; Android 7.1.2; DSCS9 Build/NHG47L; wv) AppleWebKit/537.36 (KHTML, like Gecko) '
+        'Version/4.0 Chrome/80.0.3987.149 Safari/537.36 '
+    ]
+    headers = {
+        'User-Agent': random.choice(agents)
+    }
+
+    try:
+        r = requests.get(url, headers=headers)
+    except Exception as e:
+        logging.error("Failed to load shop website: %s", e)
+        return 0
+
     soup = BeautifulSoup(r.text, features="html.parser")
     for article in articles:
         if soup.find(text=article).parent.parent.find(text="out of stock"):
@@ -74,13 +94,14 @@ def scrape_supernt(url):
             logging.info('%s is available!', article)
             articles.remove(article)
             str_articles = ', '.join(articles)
-            print(str_articles)
+            if config.get('BASE', 'DEBUG') == 'true': pp.pprint(str_articles)
             config.set('BASE', 'articles', str_articles)
             with open('config.ini', 'w') as configfile:
                 config.write(configfile)
             send_telegram("*SuperNT ALERT*\n" \
                           "{} is available!\n" \
                           "[Analogue Shop](https://www.analogue.co/store#super-nt)".format(article))
+            return 0
 
 
 if __name__ == '__main__':
